@@ -150,13 +150,8 @@
   let categories = [];
 
   async function loadLinks() {
-    const stored = localStorage.getItem('linksData');
-    if (stored) {
-      categories = JSON.parse(stored);
-    } else {
-      const res = await fetch('links.json?t=' + Date.now());
-      categories = await res.json();
-    }
+    const res = await fetch('links.json?t=' + Date.now());
+    categories = await res.json();
     renderTabs();
     renderCards(0);
   }
