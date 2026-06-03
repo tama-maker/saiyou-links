@@ -1,39 +1,43 @@
 [
   {
-    "id": "job-sites",
-    "label": "転職サイト",
+    "id": "cat-1780462118451",
+    "label": "クラウドワークス",
     "links": [
       {
-        "title": "Indeed",
-        "url": "https://jp.indeed.com",
-        "description": "国内最大級の求人検索エンジン"
+        "title": "課題テスト①",
+        "url": "https://flame-rho.vercel.app",
+        "description": "秘書、オンラインセールス、コールスタッフ　他"
       },
       {
-        "title": "リクナビNEXT",
-        "url": "https://next.rikunabi.com",
-        "description": "リクルート運営の転職サイト"
+        "title": "課題テスト②（タイムテーブル）",
+        "url": "https://vercel-app-zeta-two.vercel.app",
+        "description": "秘書、オンランセールス、コールスタッフ　他"
+      },
+      {
+        "title": "ヒアリングシート採点",
+        "url": "https://docs.google.com/spreadsheets/d/1zgj06dZ6DroMcNpb1UCE7G4_sxMSTyPQ9BWPSKhWPAU/edit?resourcekey=&gid=1362175680#gid=1362175680"
       }
     ]
   },
   {
-    "id": "agents",
-    "label": "エージェント・媒体",
+    "id": "cat-1780462130906",
+    "label": "求人ボックス",
     "links": [
       {
-        "title": "リクルートエージェント",
-        "url": "https://r-agent.com",
-        "description": "国内No.1転職エージェント"
+        "title": "課題テスト①",
+        "url": "https://kyujinbox.vercel.app",
+        "description": "秘書、オンラインセールス、コールスタッフ　他　Indeedも同じ"
+      },
+      {
+        "title": "課題テスト②採点サイト（タイムテーブル）",
+        "url": "https://vercel-app-2-iota.vercel.app/",
+        "description": "秘書、オンラインセール、コールスタッフ　他　Indeedも同じ"
       }
     ]
   },
   {
-    "id": "company",
-    "label": "企業HP・採用ページ",
-    "links": []
-  },
-  {
-    "id": "tools",
-    "label": "その他ツール・参考サイト",
+    "id": "cat-1780462384973",
+    "label": "マニュアル",
     "links": []
   }
 ]
