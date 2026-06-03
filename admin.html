@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>リンク管理</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --danger: #ef4444;
+      --success: #16a34a;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --sub: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif; background: var(--bg); color: var(--text); }
+
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 { font-size: 18px; font-weight: 700; color: var(--primary); }
+    header a { font-size: 13px; color: var(--primary); text-decoration: none; }
+
+    .main { max-width: 720px; margin: 0 auto; padding: 32px 16px; display: flex; flex-direction: column; gap: 24px; }
+
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .form-card h2 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+
+    .form-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+    .form-row label { font-size: 12px; font-weight: 600; color: var(--sub); }
+    .form-row input, .form-row select {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: inherit;
+      width: 100%;
+    }
+    .form-row input:focus, .form-row select:focus { border-color: var(--primary); }
+
+    .inline-row { display: flex; gap: 8px; }
+    .inline-row input { flex: 1; }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .btn:hover { opacity: 0.82; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-block { width: 100%; margin-top: 4px; }
+    .btn-danger { background: none; border: 1px solid var(--danger); color: var(--danger); padding: 6px 12px; font-size: 12px; }
+    .btn-ghost { background: none; border: 1px solid var(--border); color: var(--sub); padding: 6px 12px; font-size: 12px; }
+
+    /* カテゴリセクション */
+    .category-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+    }
+    .category-name-edit {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .category-name-edit input {
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 15px;
+      font-weight: 700;
+      background: transparent;
+      width: 180px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .category-name-edit input:hover { border-color: var(--border); background: #fff; }
+    .category-name-edit input:focus { border-color: var(--primary); background: #fff; }
+    .link-count { font-size: 12px; color: var(--sub); }
+    .category-actions { display: flex; gap: 6px; }
+
+    .link-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .link-item:last-child { border-bottom: none; }
+    .link-info { flex: 1; min-width: 0; }
+    .link-title { font-size: 14px; font-weight: 600; color: var(--primary); }
+    .link-url { font-size: 12px; color: var(--sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .link-desc { font-size: 12px; color: var(--sub); }
+
+    .empty { color: var(--sub); font-size: 13px; padding: 16px 18px; }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1e293b; color: #fff; padding: 12px 24px;
+      border-radius: 8px; font-size: 14px; opacity: 0;
+      transition: opacity 0.3s; pointer-events: none; white-space: nowrap; z-index: 999;
+    }
+    .toast.show { opacity: 1; }
+
+    .section-title { font-size: 13px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 0.05em; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⚙️ リンク管理</h1>
+  <a href="index.html">← まとめサイトへ戻る</a>
+</header>
+
+<div class="main">
+
+  <!-- カテゴリ追加 -->
+  <div class="form-card">
+    <h2>＋ カテゴリを追加</h2>
+    <div class="inline-row">
+      <input id="inp-cat-name" type="text" placeholder="例：スカウトサービス">
+      <button class="btn btn-primary" onclick="addCategory()">追加</button>
+    </div>
+  </div>
+
+  <!-- リンク追加 -->
+  <div class="form-card">
+    <h2>＋ リンクを追加</h2>
+    <div class="form-row">
+      <label>カテゴリ</label>
+      <select id="sel-category"></select>
+    </div>
+    <div class="form-row">
+      <label>サイト名 <span style="color:red">*</span></label>
+      <input id="inp-title" type="text" placeholder="例：リクルートエージェント">
+    </div>
+    <div class="form-row">
+      <label>URL <span style="color:red">*</span></label>
+      <input id="inp-url" type="url" placeholder="https://...">
+    </div>
+    <div class="form-row">
+      <label>説明文（省略可）</label>
+      <input id="inp-desc" type="text" placeholder="例：国内最大級の転職エージェント">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="addLink()">追加する</button>
+  </div>
+
+  <!-- カテゴリ＆リンク一覧 -->
+  <div class="section-title">カテゴリ一覧</div>
+  <div id="link-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let data = [];
+
+  const DEFAULT_DATA = [
+    {
+      "id": "job-sites",
+      "label": "転職サイト",
+      "links": [
+        { "title": "Indeed", "url": "https://jp.indeed.com", "description": "国内最大級の求人検索エンジン" },
+        { "title": "リクナビNEXT", "url": "https://next.rikunabi.com", "description": "リクルート運営の転職サイト" }
+      ]
+    },
+    {
+      "id": "agents",
+      "label": "エージェント・媒体",
+      "links": [
+        { "title": "リクルートエージェント", "url": "https://r-agent.com", "description": "国内No.1転職エージェント" }
+      ]
+    },
+    { "id": "company", "label": "企業HP・採用ページ", "links": [] },
+    { "id": "tools", "label": "その他ツール・参考サイト", "links": [] }
+  ];
+
+  function init() {
+    const stored = localStorage.getItem('linksData');
+    data = stored ? JSON.parse(stored) : DEFAULT_DATA;
+    renderCategorySelect();
+    renderList();
+  }
+
+  function renderCategorySelect() {
+    const sel = document.getElementById('sel-category');
+    sel.innerHTML = data.map((cat, i) => `<option value="${i}">${cat.label}</option>`).join('');
+  }
+
+  function renderList() {
+    const el = document.getElementById('link-list');
+    if (data.length === 0) {
+      el.innerHTML = `<div style="color:var(--sub);font-size:13px;">カテゴリがありません。上から追加してください。</div>`;
+      return;
+    }
+    el.innerHTML = data.map((cat, ci) => `
+      <div class="category-section">
+        <div class="category-header">
+          <div class="category-name-edit">
+            <input type="text" value="${cat.label}"
+              onchange="renameCategory(${ci}, this.value)"
+              title="クリックして名前を編集">
+            <span class="link-count">${cat.links.length}件</span>
+          </div>
+          <div class="category-actions">
+            <button class="btn btn-danger" onclick="removeCategory(${ci})">カテゴリ削除</button>
+          </div>
+        </div>
+        ${cat.links.length === 0
+          ? `<div class="empty">リンクがありません</div>`
+          : cat.links.map((link, li) => `
+            <div class="link-item">
+              <div class="link-info">
+                <div class="link-title">${link.title}</div>
+                <div class="link-url">${link.url}</div>
+                ${link.description ? `<div class="link-desc">${link.description}</div>` : ''}
+              </div>
+              <button class="btn btn-danger" onclick="removeLink(${ci}, ${li})">削除</button>
+            </div>
+          `).join('')}
+      </div>
+    `).join('');
+  }
+
+  function addCategory() {
+    const name = document.getElementById('inp-cat-name').value.trim();
+    if (!name) { showToast('カテゴリ名を入力してください'); return; }
+    const id = 'cat-' + Date.now();
+    data.push({ id, label: name, links: [] });
+    document.getElementById('inp-cat-name').value = '';
+    save();
+    showToast(`「${name}」を追加しました`);
+  }
+
+  function renameCategory(ci, newName) {
+    if (!newName.trim()) return;
+    data[ci].label = newName.trim();
+    save(false);
+    showToast('カテゴリ名を変更しました');
+  }
+
+  function removeCategory(ci) {
+    const cat = data[ci];
+    if (cat.links.length > 0) {
+      if (!confirm(`「${cat.label}」にはリンクが${cat.links.length}件あります。\nカテゴリごと削除しますか？`)) return;
+    } else {
+      if (!confirm(`「${cat.label}」を削除しますか？`)) return;
+    }
+    data.splice(ci, 1);
+    save();
+    showToast('カテゴリを削除しました');
+  }
+
+  function addLink() {
+    const ci = parseInt(document.getElementById('sel-category').value);
+    const title = document.getElementById('inp-title').value.trim();
+    const url = document.getElementById('inp-url').value.trim();
+    const desc = document.getElementById('inp-desc').value.trim();
+
+    if (!title || !url) { showToast('サイト名とURLは必須です'); return; }
+    if (!url.startsWith('http')) { showToast('URLは https:// から始めてください'); return; }
+
+    data[ci].links.push({ title, url, ...(desc && { description: desc }) });
+    document.getElementById('inp-title').value = '';
+    document.getElementById('inp-url').value = '';
+    document.getElementById('inp-desc').value = '';
+    save();
+    showToast('追加しました！');
+  }
+
+  function removeLink(ci, li) {
+    if (!confirm(`「${data[ci].links[li].title}」を削除しますか？`)) return;
+    data[ci].links.splice(li, 1);
+    save();
+    showToast('削除しました');
+  }
+
+  function save(rerender = true) {
+    const json = JSON.stringify(data, null, 2);
+    localStorage.setItem('linksData', json);
+    if (rerender) {
+      renderCategorySelect();
+      renderList();
+    }
+    downloadJSON(json);
+  }
+
+  function downloadJSON(json) {
+    const blob = new Blob([json], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'links.json';
+    a.click();
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  init();
+</script>
+
+</body>
+</html>

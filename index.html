@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>採用まとめサイト</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --subtext: #64748b;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --hover: #f1f5f9;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 32px 16px;
+    }
+
+    /* タブ */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 28px;
+      overflow-x: auto;
+      padding-bottom: 0;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--subtext);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .tab-btn:hover { color: var(--primary); }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* カード */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: box-shadow 0.15s, transform 0.15s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--subtext);
+      line-height: 1.5;
+    }
+
+    .card-url {
+      font-size: 11px;
+      color: #94a3b8;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* 空の状態 */
+    .empty {
+      text-align: center;
+      color: var(--subtext);
+      padding: 60px 20px;
+      font-size: 14px;
+    }
+
+    .empty span { font-size: 36px; display: block; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📋 採用まとめサイト</h1>
+  <a href="admin.html" style="font-size:13px;color:#2563eb;text-decoration:none;">⚙️ リンクを追加・管理</a>
+</header>
+
+<div class="main">
+  <div class="tabs" id="tabs"></div>
+  <div class="cards" id="cards"></div>
+</div>
+
+<script>
+  let categories = [];
+
+  async function loadLinks() {
+    const stored = localStorage.getItem('linksData');
+    if (stored) {
+      categories = JSON.parse(stored);
+    } else {
+      const res = await fetch('links.json?t=' + Date.now());
+      categories = await res.json();
+    }
+    renderTabs();
+    renderCards(0);
+  }
+
+  function renderTabs() {
+    const tabsEl = document.getElementById('tabs');
+    tabsEl.innerHTML = categories.map((cat, i) => `
+      <button class="tab-btn ${i === 0 ? 'active' : ''}"
+              onclick="switchTab(${i}, this)">
+        ${cat.label}
+        <span style="font-size:11px;font-weight:400;margin-left:4px;color:#94a3b8">(${cat.links.length})</span>
+      </button>
+    `).join('');
+  }
+
+  function switchTab(index, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCards(index);
+  }
+
+  function renderCards(index) {
+    const cardsEl = document.getElementById('cards');
+    const links = categories[index]?.links ?? [];
+
+    if (links.length === 0) {
+      cardsEl.innerHTML = `
+        <div class="empty" style="grid-column:1/-1">
+          <span>🔗</span>
+          links.json にリンクを追加するとここに表示されます
+        </div>`;
+      return;
+    }
+
+    cardsEl.innerHTML = links.map(link => `
+      <a class="card" href="${link.url}" target="_blank" rel="noopener noreferrer">
+        <div class="card-title">${link.title}</div>
+        ${link.description ? `<div class="card-desc">${link.description}</div>` : ''}
+        <div class="card-url">${link.url}</div>
+      </a>
+    `).join('');
+  }
+
+  loadLinks();
+</script>
+
+</body>
+</html>

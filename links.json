@@ -1,0 +1,39 @@
+[
+  {
+    "id": "job-sites",
+    "label": "転職サイト",
+    "links": [
+      {
+        "title": "Indeed",
+        "url": "https://jp.indeed.com",
+        "description": "国内最大級の求人検索エンジン"
+      },
+      {
+        "title": "リクナビNEXT",
+        "url": "https://next.rikunabi.com",
+        "description": "リクルート運営の転職サイト"
+      }
+    ]
+  },
+  {
+    "id": "agents",
+    "label": "エージェント・媒体",
+    "links": [
+      {
+        "title": "リクルートエージェント",
+        "url": "https://r-agent.com",
+        "description": "国内No.1転職エージェント"
+      }
+    ]
+  },
+  {
+    "id": "company",
+    "label": "企業HP・採用ページ",
+    "links": []
+  },
+  {
+    "id": "tools",
+    "label": "その他ツール・参考サイト",
+    "links": []
+  }
+]
