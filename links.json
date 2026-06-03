@@ -38,6 +38,11 @@
   {
     "id": "cat-1780462384973",
     "label": "マニュアル",
-    "links": []
+    "links": [
+      {
+        "title": "このサイトのリンク編集方法",
+        "url": "https://docs.google.com/document/d/1kdOFlSnKaDzIB1b9tgpTtZEX7EmLGzxjyIEvpfWVVJw/edit?usp=sharing"
+      }
+    ]
   }
 ]
